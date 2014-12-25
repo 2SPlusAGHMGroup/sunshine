@@ -57,6 +57,7 @@ public class WeatherProvider extends ContentProvider {
             WeatherContract.LocationEntry.TABLE_NAME +
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
                     WeatherContract.WeatherEntry.COLUMN_DATETEXT + " = ? ";
+
     private WeatherDbHelper mOpenHelper;
 
     private static UriMatcher buildUriMatcher() {
@@ -158,7 +159,6 @@ public class WeatherProvider extends ContentProvider {
             }
 
             /**
-             * TODO YOUR CODE BELOW HERE FOR QUIZ
              * QUIZ - 4b - Implement Location_ID queries
              * https://www.udacity.com/course/viewer#!/c-ud853/l-1576308909/e-1675098551/m-1675098552
              **/
@@ -167,8 +167,7 @@ public class WeatherProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         WeatherContract.LocationEntry.TABLE_NAME,
                         projection,
-                        WeatherContract.LocationEntry._ID +
-                                "=?",
+                        WeatherContract.LocationEntry._ID + " = ?",
                         new String[]{id + ""},
                         null,
                         null,
@@ -209,7 +208,6 @@ public class WeatherProvider extends ContentProvider {
                 return WeatherContract.WeatherEntry.CONTENT_TYPE;
 
             /**
-             * TODO YOUR CODE BELOW HERE FOR QUIZ
              * QUIZ - 4b - Coding the Content Provider : getType
              * https://www.udacity.com/course/viewer#!/c-ud853/l-1576308909/e-1675098546/m-1675098547
              **/
@@ -299,7 +297,7 @@ public class WeatherProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        // Because a null deletes all rows
+        // Because a null updates all rows
         if (selection == null || rowsUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }

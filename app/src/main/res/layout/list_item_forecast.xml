@@ -1,8 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:id="@+id/list_item_forecast_textview"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical">
+    android:orientation="horizontal"
+    android:padding="16dp">
 
-</TextView>
+    <TextView
+        android:id="@+id/list_item_date_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Today" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text=" - " />
+
+    <TextView
+        android:id="@+id/list_item_forecast_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Clear" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text=" - " />
+
+    <TextView
+        android:id="@+id/list_item_high_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="High" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text=" - " />
+
+    <TextView
+        android:id="@+id/list_item_low_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Low" />
+</LinearLayout>

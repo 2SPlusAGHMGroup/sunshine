@@ -21,12 +21,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
-import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
-import com.example.android.sunshine.app.data.WeatherDbHelper;
-
 import java.util.Map;
 import java.util.Set;
+
+import hu.dushu.developers.sunshine.data.WeatherContract.LocationEntry;
+import hu.dushu.developers.sunshine.data.WeatherContract.WeatherEntry;
+import hu.dushu.developers.sunshine.data.WeatherDbHelper;
 
 public class TestDb extends AndroidTestCase {
 
