@@ -1,11 +1,11 @@
 package hu.dushu.developers.sunshine;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -30,9 +30,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
     private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-    private final FragmentActivity activity;
+    private final Activity activity;
 
-    public FetchWeatherTask(FragmentActivity activity) {
+    public FetchWeatherTask(Activity activity) {
         this.activity = activity;
     }
 
@@ -210,7 +210,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         double lon = coordJson.getDouble("lon");
 
         Log.v(LOG_TAG, cityName + ", with coord: " + lat + " " + lon);
-        addLocation(locationSetting, cityName, lat, lon);
+        long locationID = addLocation(locationSetting, cityName, lat, lon);
 
         // Get and insert the new weather information into the database
         Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
@@ -254,7 +254,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
             ContentValues weatherValues = new ContentValues();
 
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationSetting);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationID);
             weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATETEXT,
                     WeatherContract.getDbDateString(new Date(dateTime * 1000L)));
             weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, humidity);

@@ -48,7 +48,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     // For the forecast view we're showing only a small subset of the stored data.
     // Specify the columns we need.
-    private static final String[] FORECAST_COLUMNS = {
+    public static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
             // (both have an _id column)
@@ -202,19 +202,38 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
 //                String item = adapter.getItem(position);
+                SimpleCursorAdapter adapter = (SimpleCursorAdapter) parent.getAdapter();
+                Cursor cursor = adapter.getCursor();
+                String date = cursor.getString(cursor.getColumnIndex(
+                        WeatherContract.WeatherEntry.COLUMN_DATETEXT));
+//                String weather = cursor.getString(cursor.getColumnIndex(
+//                        WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
+//                double high = cursor.getDouble(cursor.getColumnIndex(
+//                        WeatherEntry.COLUMN_MAX_TEMP));
+//                double low = cursor.getDouble(cursor.getColumnIndex(
+//                        WeatherEntry.COLUMN_MIN_TEMP));
+//
+//                boolean isMetric = Utility.isMetric(getActivity());
+//                String item = Utility.formatDate(date)
+//                        + " - " + weather
+//                        + " - " + Utility.formatTemperature(high, isMetric)
+//                        + "/" + Utility.formatTemperature(low, isMetric);
+                String item = date;
+
 
 //                Toast.makeText(getActivity(), item, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-//                intent.putExtra(Intent.EXTRA_TEXT, item);
-                intent.putExtra(Intent.EXTRA_TEXT, "placeholder");
+                intent.putExtra(Intent.EXTRA_TEXT, item);
+//                intent.putExtra(Intent.EXTRA_TEXT, "placeholder");
                 getActivity().startActivity(intent);
 
                 return;
             }
         });
 
-        refresh();
+//        refresh();
 
         return rootView;
     }
@@ -264,5 +283,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         getAdapter().swapCursor(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String newLocation = Utility.getPreferredLocation(getActivity());
+        if (mLocation != null && !mLocation.equals(newLocation)) {
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+//            mLocation = newLocation;
+//            refresh();
+        }
     }
 }

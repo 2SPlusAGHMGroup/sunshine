@@ -23,8 +23,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 public class WeatherProvider extends ContentProvider {
+
+    private static final String LOG_TAG = WeatherProvider.class.getSimpleName();
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -142,6 +145,13 @@ public class WeatherProvider extends ContentProvider {
             // "weather/*"
             case WEATHER_WITH_LOCATION: {
                 retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
+
+                if (retCursor.moveToFirst()) {
+                    do {
+                        Log.d("weather", retCursor.getString(retCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT)));
+                    } while (retCursor.moveToNext());
+                }
+
                 break;
             }
             // "weather"
@@ -324,6 +334,7 @@ public class WeatherProvider extends ContentProvider {
                     db.endTransaction();
                 }
                 getContext().getContentResolver().notifyChange(uri, null);
+                Log.d(LOG_TAG, "number of weather records inserted: " + returnCount);
                 return returnCount;
             default:
                 return super.bulkInsert(uri, values);
