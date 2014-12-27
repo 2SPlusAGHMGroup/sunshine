@@ -39,7 +39,14 @@
 
         <provider
             android:name=".data.WeatherProvider"
-            android:authorities="hu.dushu.developers.sunshine" />
+            android:authorities="hu.dushu.developers.sunshine"
+            android:exported="true" />
+
     </application>
+
+    <permission
+        android:name="hu.dushu.developers.sunshine.LICENCE_TO_KILL"
+        android:label="Licence to Kill"
+        android:protectionLevel="dangerous" />
 
 </manifest>
