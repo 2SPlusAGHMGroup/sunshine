@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hu.dushu.developers.sunshine">
 
-    <!-- <uses-sdk android:minSdkVersion="11" /> -->
+    <!-- http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels -->
+    <!-- overridden by app/build.gradle -->
+    <!--<uses-sdk android:minSdkVersion="13" />-->
 
     <uses-permission android:name="android.permission.INTERNET" />
 

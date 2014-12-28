@@ -8,11 +8,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity implements Callback {
+public class MainActivity extends ActionBarActivity
+        implements ForecastFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private boolean mTwoPane;
+    private boolean twoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +23,16 @@ public class MainActivity extends ActionBarActivity implements Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        ForecastFragment fragment = findViewById(R.id.fragment_forecast);
+
         if (findViewById(R.id.weather_detail_container) != null) {
             Log.d(LOG_TAG, "tablet");
 
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
-            mTwoPane = true;
+//            twoPane = true;
+            setTwoPane(true);
 
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -42,13 +46,20 @@ public class MainActivity extends ActionBarActivity implements Callback {
         } else {
             Log.d(LOG_TAG, "phone");
 
-            mTwoPane = false;
+//            twoPane = false;
+            setTwoPane(false);
+//            setTwoPane(true);
+
 //            if (savedInstanceState == null) {
 //                getSupportFragmentManager().beginTransaction()
 //                        .add(R.id.container, new ForecastFragment())
 //                        .commit();
 //            }
         }
+
+        ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast);
+        fragment.setUseTodayLayout(!isTwoPane());
 
         return;
     }
@@ -119,7 +130,7 @@ public class MainActivity extends ActionBarActivity implements Callback {
     @Override
     public void onItemSelected(String date) {
 
-        if (mTwoPane) {
+        if (isTwoPane()) {
             DetailFragment detailFragment = new DetailFragment();
 
             Bundle args = new Bundle();
@@ -141,5 +152,14 @@ public class MainActivity extends ActionBarActivity implements Callback {
         }
 
         return;
+    }
+
+    public boolean isTwoPane() {
+        return twoPane;
+//        return true;
+    }
+
+    public void setTwoPane(boolean twoPane) {
+        this.twoPane = twoPane;
     }
 }

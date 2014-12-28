@@ -5,4 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ForecastListStyle">
+
+        <!-- TODO comment out the next single line after debugging -->
+        <item name="android:choiceMode">singleChoice</item>
+
+    </style>
+
 </resources>

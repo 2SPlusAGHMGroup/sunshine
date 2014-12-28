@@ -194,6 +194,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         boolean isMetric = Utility.isMetric(getActivity());
 
         {
+            TextView view = (TextView) rootView.findViewById(R.id.day_textview);
+            view.setText(Utility.getFriendlyDayString(getActivity(), date));
+        }
+        {
             TextView view = (TextView) rootView.findViewById(R.id.date_textview);
             view.setText(Utility.formatDate(date));
         }

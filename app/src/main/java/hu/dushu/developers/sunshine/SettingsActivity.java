@@ -4,6 +4,9 @@ package hu.dushu.developers.sunshine;
  * Created by renfeng on 12/20/14.
  */
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -80,7 +83,7 @@ public class SettingsActivity extends PreferenceActivity
         }
 
         // are we starting the preference activity?
-        if ( !mBindingPreference ) {
+        if (!mBindingPreference) {
             if (preference.getKey().equals(getString(R.string.pref_location_key))) {
                 FetchWeatherTask weatherTask = new FetchWeatherTask(this);
                 String location = value.toString();
@@ -94,4 +97,9 @@ public class SettingsActivity extends PreferenceActivity
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public Intent getParentActivityIntent() {
+        return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    }
 }

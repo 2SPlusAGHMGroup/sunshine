@@ -60,6 +60,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
 
+    private static final String POSITION_KEY = "position";
+
     //    public ArrayAdapter<String> adapter;
 //    public SimpleCursorAdapter adapter;
     public ForecastAdapter adapter;
@@ -67,16 +69,27 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private String mLocation;
 //    private View rootView;
 
+    private int position;
+    private ListView view;
+    private boolean useTodayLayout;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+
+        //        adapter.setTodayLayout(!((Layout) getActivity()).isTwoPane());
+        getAdapter().setTodayLayout(isUseTodayLayout());
 
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        if (savedInstanceState == null) {
+            savedInstanceState = new Bundle();
+        }
 
         super.onCreate(savedInstanceState);
 
@@ -133,6 +146,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         new FetchWeatherTask(getActivity()).execute(location);
 
         return;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        /*
+         * TODO validate position (ListView.INVALID_POSITION)
+         */
+        outState.putInt(POSITION_KEY, getPosition());
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -240,12 +264,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Callback callback = (Callback) getActivity();
                 callback.onItemSelected(item);
 
+                setPosition(position);
 
                 return;
             }
         });
 
 //        refresh();
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_KEY)) {
+            int position = savedInstanceState.getInt(POSITION_KEY);
+            setPosition(position);
+        }
+
+        setView(view);
 
         return rootView;
     }
@@ -289,7 +321,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        /*
+         * TODO validate position?
+         */
+        view.smoothScrollToPosition(getPosition());
+
         getAdapter().swapCursor(data);
+
+        return;
     }
 
     @Override
@@ -306,5 +346,47 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //            mLocation = newLocation;
 //            refresh();
         }
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Nullable
+    @Override
+    public ListView getView() {
+        return view;
+    }
+
+    public void setView(ListView view) {
+        this.view = view;
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onItemSelected(String date);
+    }
+
+//    public interface Layout {
+//        boolean isTwoPane();
+//    }
+
+    public boolean isUseTodayLayout() {
+        return useTodayLayout;
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        this.useTodayLayout = useTodayLayout;
     }
 }

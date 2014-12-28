@@ -6,7 +6,8 @@ android {
 
     defaultConfig {
         applicationId "hu.dushu.developers.sunshine"
-        minSdkVersion 10
+        // http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
+        minSdkVersion 13
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
