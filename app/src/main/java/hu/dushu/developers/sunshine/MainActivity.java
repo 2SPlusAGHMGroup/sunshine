@@ -8,18 +8,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements Callback {
+
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         Log.d("activity lifecycle", "onCreate()");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
-                    .commit();
+
+        if (findViewById(R.id.weather_detail_container) != null) {
+            Log.d(LOG_TAG, "tablet");
+
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            if (savedInstanceState == null) {
+                DetailFragment detailFragment = new DetailFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, detailFragment)
+                        .commit();
+            }
+        } else {
+            Log.d(LOG_TAG, "phone");
+
+            mTwoPane = false;
+//            if (savedInstanceState == null) {
+//                getSupportFragmentManager().beginTransaction()
+//                        .add(R.id.container, new ForecastFragment())
+//                        .commit();
+//            }
         }
+
+        return;
     }
 
     @Override
@@ -74,13 +105,41 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-
             startActivity(new Intent(this, SettingsActivity.class));
-
             return true;
         }
+
+        /*
+         * TODO move locate on map here
+         */
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onItemSelected(String date) {
+
+        if (mTwoPane) {
+            DetailFragment detailFragment = new DetailFragment();
+
+            Bundle args = new Bundle();
+            args.putString(DetailActivity.DATE_KEY, date);
+            detailFragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, detailFragment)
+                    .commit();
+        } else {
+            //                Toast.makeText(getActivity(), item, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, DetailActivity.class);
+//                intent.putExtra(Intent.EXTRA_TEXT, item);
+            intent.putExtra(DetailActivity.DATE_KEY, date);
+//                intent.putExtra(Intent.EXTRA_TEXT, "placeholder");
+
+//                getActivity().startActivity(intent);
+            startActivity(intent);
+        }
+
+        return;
+    }
 }

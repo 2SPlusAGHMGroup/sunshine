@@ -11,6 +11,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,9 +29,10 @@ import hu.dushu.developers.sunshine.data.WeatherContract;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-//        private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
-    private static final int FORECAST_LOADER = 0;
+    private static final int DETAIL_LOADER = 0;
+    private static final String LOCATION_KEY = "location";
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -54,6 +56,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private String forecast;
     private View rootView;
+    private String mLocation;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -66,6 +69,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         MenuItem item = menu.findItem(R.id.action_share);
         ShareActionProvider provider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        /*
+         * TODO will forecast be null?
+         */
         provider.setShareIntent(createShareIntent());
 
         return;
@@ -75,9 +82,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        forecast = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
+//        forecast = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
 //        rootView = inflater.inflate(R.layout.list_item_forecast, container, false);
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        /*
+         * TODO declare and init view variables
+         */
 //
 //            TextView view = (TextView) rootView.findViewById(R.id.textview_detail);
 //            view.setText(forecast);
@@ -93,7 +104,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private Intent createShareIntent() {
 
         Intent intent = new Intent(Intent.ACTION_SEND);
+
+        /*
+         * TODO default?
+         */
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, forecast + " #SunshineApp");
 
@@ -103,15 +119,24 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String mLocation = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationDateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                mLocation, forecast);
+        Log.v(LOG_TAG, "In onCreateLoader");
+        String date = getArguments().getString(DetailActivity.DATE_KEY);
+
+        /*
+         * TODO default?
+         */
+        // Sort order:  Ascending, by date.
+//        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATETEXT + " ASC";
+
+        mLocation = Utility.getPreferredLocation(getActivity());
+        Uri weather = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, date);
+        Log.v(LOG_TAG, weather.toString());
 
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
         return new CursorLoader(
                 getActivity(),
-                weatherForLocationDateUri,
+                weather,
                 FORECAST_COLUMNS,
                 null,
                 null,
@@ -122,7 +147,25 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        /*
+         * TODO it should make no difference whether to invoke the method of super class first or last
+         */
+
+        /*
+         * TODO replace intent with argument
+         */
+//        Intent intent = getActivity().getIntent();
+//        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY)) {
+//            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+//        }
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey(DetailActivity.DATE_KEY)) {
+            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        }
+
+        if (savedInstanceState != null) {
+            mLocation = savedInstanceState.getString(LOCATION_KEY);
+        }
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -131,6 +174,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
         data.moveToFirst();
+
+        /*
+         * TODO replace getColumnIndex with predefined indices
+         */
         String date = data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT));
         String weather = data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
         double high = data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP));
@@ -179,6 +226,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             view.setText("Pressure: " + pressure + " hPa");
         }
 
+        /*
+         * the string for sharing
+         */
+        forecast = date + " - " + weather + " - "
+                + Utility.formatTemperature(getActivity(), high, isMetric) + "/"
+                + Utility.formatTemperature(getActivity(), low, isMetric);
+
         return;
     }
 
@@ -202,4 +256,28 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 //        }
 //
 //    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        Intent intent = getActivity().getIntent();
+//        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY) &&
+//                mLocation != null &&
+//                !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+//            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+//        }
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey(DetailActivity.DATE_KEY) &&
+                mLocation != null &&
+                !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(LOCATION_KEY, mLocation);
+        super.onSaveInstanceState(outState);
+    }
 }

@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import hu.dushu.developers.sunshine.data.WeatherContract;
@@ -64,6 +63,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     //    public ArrayAdapter<String> adapter;
 //    public SimpleCursorAdapter adapter;
     public ForecastAdapter adapter;
+
     private String mLocation;
 //    private View rootView;
 
@@ -80,7 +80,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         super.onCreate(savedInstanceState);
 
-        this.setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
 
         return;
     }
@@ -98,6 +98,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             refresh();
             return true;
         } else if (id == R.id.action_locate) {
+
+            /*
+             * TODO move to main activity
+             */
+
             SharedPreferences preferences = PreferenceManager
                     .getDefaultSharedPreferences(getActivity());
             String location = preferences
@@ -134,7 +139,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ArrayList<String> list = new ArrayList<String>();
+//        ArrayList<String> list = new ArrayList<String>();
 //        list.add("Today - Sunny - 88/63");
 //        list.add("Tomorrow - Foggy - 70/46");
 //        list.add("Weds - Cloudy - 72/63");
@@ -166,7 +171,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //                },
 //                0
 //        );
-        adapter = new ForecastAdapter(
+        ForecastAdapter adapter = new ForecastAdapter(
                 getActivity(),
                 /*TODO*/
                 null,
@@ -210,10 +215,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 //                String item = adapter.getItem(position);
 //                SimpleCursorAdapter adapter = (SimpleCursorAdapter) parent.getAdapter();
-                ForecastAdapter adapter = (ForecastAdapter) parent.getAdapter();
-                Cursor cursor = adapter.getCursor();
-                String date = cursor.getString(cursor.getColumnIndex(
-                        WeatherContract.WeatherEntry.COLUMN_DATETEXT));
+
+//                ForecastAdapter adapter = (ForecastAdapter) parent.getAdapter();
+//                Cursor cursor = adapter.getCursor();
+                Cursor cursor = getAdapter().getCursor();
+
+//                String date = cursor.getString(cursor.getColumnIndex(
+//                        WeatherContract.WeatherEntry.COLUMN_DATETEXT));
+                String date = cursor.getString(COL_WEATHER_DATE);
 //                String weather = cursor.getString(cursor.getColumnIndex(
 //                        WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
 //                double high = cursor.getDouble(cursor.getColumnIndex(
@@ -228,12 +237,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //                        + "/" + Utility.formatTemperature(low, isMetric);
                 String item = date;
 
+                Callback callback = (Callback) getActivity();
+                callback.onItemSelected(item);
 
-//                Toast.makeText(getActivity(), item, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, item);
-//                intent.putExtra(Intent.EXTRA_TEXT, "placeholder");
-                getActivity().startActivity(intent);
 
                 return;
             }

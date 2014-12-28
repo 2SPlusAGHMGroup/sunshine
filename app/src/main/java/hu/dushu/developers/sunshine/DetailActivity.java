@@ -9,13 +9,29 @@ import android.view.MenuItem;
 
 public class DetailActivity extends ActionBarActivity {
 
+    public static final String DATE_KEY = "forecast_date";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
+
+            Intent intent = getIntent();
+//        if (intent == null || !intent.hasExtra(DetailActivity.DATE_KEY)) {
+//            return null;
+//        }
+//            String date = intent.getExtras().getString(DetailActivity.DATE_KEY);
+            String date = intent.getStringExtra(DetailActivity.DATE_KEY);
+
+            Bundle args = new Bundle();
+            args.putString(DetailActivity.DATE_KEY, date);
+
+            DetailFragment detailFragment = new DetailFragment();
+            detailFragment.setArguments(args);
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DetailFragment())
+                    .add(R.id.weather_detail_container, detailFragment)
                     .commit();
         }
     }
@@ -53,14 +69,10 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-
             startActivity(new Intent(this, SettingsActivity.class));
-
             return true;
-        } else if (id == R.id.action_share) {
-
-
-            return true;
+//        } else if (id == R.id.action_share) {
+//            return true;
         }
 
         return super.onOptionsItemSelected(item);
