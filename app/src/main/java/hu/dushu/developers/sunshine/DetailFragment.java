@@ -98,6 +98,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
          */
 //        rootView.setTag(new ViewHolder(rootView));
 
+        if (savedInstanceState != null) {
+            mLocation = savedInstanceState.getString(LOCATION_KEY);
+        }
+
         return rootView;
     }
 
@@ -128,7 +132,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Sort order:  Ascending, by date.
 //        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATETEXT + " ASC";
 
+        /*
+         * TODO if null
+         */
         mLocation = Utility.getPreferredLocation(getActivity());
+
         Uri weather = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, date);
         Log.v(LOG_TAG, weather.toString());
 
@@ -152,7 +160,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
          */
 
         /*
-         * TODO replace intent with argument
+         * replace intent with argument
          */
 //        Intent intent = getActivity().getIntent();
 //        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY)) {
@@ -194,39 +202,40 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         boolean isMetric = Utility.isMetric(getActivity());
 
         {
-            TextView view = (TextView) rootView.findViewById(R.id.day_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_day_textview);
             view.setText(Utility.getFriendlyDayString(getActivity(), date));
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.date_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_date_textview);
             view.setText(Utility.formatDate(date));
         }
         {
-            ImageView view = (ImageView) rootView.findViewById(R.id.icon_imageview);
+            ImageView view = (ImageView) rootView.findViewById(R.id.detail_icon);
             view.setImageResource(Utility.getResourceForWeatherCondition(weatherId, true, weather));
+            view.setContentDescription(weather);
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.weather_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
             view.setText(weather);
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.high_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_high_textview);
             view.setText(Utility.formatTemperature(getActivity(), high, isMetric));
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.low_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_low_textview);
             view.setText(Utility.formatTemperature(getActivity(), low, isMetric));
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.humidity_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
             view.setText("Humidity: " + humidity + "%");
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.wind_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_wind_textview);
             view.setText(Utility.getFormattedWind(getActivity(), wind, degrees));
         }
         {
-            TextView view = (TextView) rootView.findViewById(R.id.pressure_textview);
+            TextView view = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
             view.setText("Pressure: " + pressure + " hPa");
         }
 

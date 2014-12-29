@@ -86,6 +86,7 @@ public class ForecastAdapter extends CursorAdapter {
             holder.iconView.setImageResource(
                     Utility.getResourceForWeatherCondition(weatherId, false, description));
         }
+        holder.iconView.setContentDescription(description);
 
         // Find TextView and set formatted date on it
 //        TextView dateView = (TextView) view.findViewById(R.id.list_item_date_textview);

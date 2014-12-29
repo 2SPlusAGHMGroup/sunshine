@@ -14,6 +14,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import hu.dushu.developers.sunshine.data.WeatherContract;
+import hu.dushu.developers.sunshine.service.SunshineService;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -85,9 +86,12 @@ public class SettingsActivity extends PreferenceActivity
         // are we starting the preference activity?
         if (!mBindingPreference) {
             if (preference.getKey().equals(getString(R.string.pref_location_key))) {
-                FetchWeatherTask weatherTask = new FetchWeatherTask(this);
                 String location = value.toString();
-                weatherTask.execute(location);
+//                FetchWeatherTask weatherTask = new FetchWeatherTask(this);
+//                weatherTask.execute(location);
+                Intent service = new Intent(this, SunshineService.class);
+                service.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
+                startService(service);
             } else {
                 // notify code that weather may be impacted
                 getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);

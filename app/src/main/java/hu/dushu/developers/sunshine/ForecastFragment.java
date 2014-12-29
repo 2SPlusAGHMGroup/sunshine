@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,11 +25,14 @@ import android.widget.Toast;
 import java.util.Date;
 
 import hu.dushu.developers.sunshine.data.WeatherContract;
+import hu.dushu.developers.sunshine.sync.SunshineSyncAdapter;
 
 /**
  * Created by renfeng on 12/12/14.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
@@ -71,15 +75,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private int position;
     private ListView view;
-    private boolean useTodayLayout;
+//    private boolean useTodayLayout;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
 
+        /*
+         * must be placed in this lifecycle phase
+         */
         //        adapter.setTodayLayout(!((Layout) getActivity()).isTwoPane());
-        getAdapter().setTodayLayout(isUseTodayLayout());
+//        getAdapter().setTodayLayout(isUseTodayLayout());
+        boolean useTodayLayout = !getResources().getBoolean(R.bool.two_pane_layout);
+        getAdapter().setTodayLayout(useTodayLayout);
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -108,7 +117,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            refresh();
+            updateWeather();
             return true;
         } else if (id == R.id.action_locate) {
 
@@ -133,17 +142,36 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return super.onOptionsItemSelected(item);
     }
 
-    private void refresh() {
+    private void updateWeather() {
 
-//        SharedPreferences preferences = PreferenceManager
-//                .getDefaultSharedPreferences(getActivity());
-//        String location = preferences
-//                .getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-//        String unit = preferences
-//                .getString(getString(R.string.pref_unit_key), getString(R.string.pref_unit_default));
-//        Log.d("unit", unit);
-        String location = Utility.getPreferredLocation(getActivity());
-        new FetchWeatherTask(getActivity()).execute(location);
+////        SharedPreferences preferences = PreferenceManager
+////                .getDefaultSharedPreferences(getActivity());
+////        String location = preferences
+////                .getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+////        String unit = preferences
+////                .getString(getString(R.string.pref_unit_key), getString(R.string.pref_unit_default));
+////        Log.d("unit", unit);
+//        String location = Utility.getPreferredLocation(getActivity());
+//
+////        new FetchWeatherTask(getActivity()).execute(location);
+////        Intent service = new Intent(getActivity(), SunshineService.class);
+//        Intent service = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+//        service.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
+////        getActivity().startService(service);
+//
+//        PendingIntent broadcast = PendingIntent.getBroadcast(
+//                getActivity(), 0, service, PendingIntent.FLAG_ONE_SHOT);
+//
+//        AlarmManager alarmManager = (AlarmManager) getActivity()
+//                .getSystemService(Context.ALARM_SERVICE);
+////        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, broadcast);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, broadcast);
+//
+//        /*
+//         * TODO ?
+//         */
+////        getActivity().sendBroadcast(service);
+        SunshineSyncAdapter.syncImmediately(getActivity());
 
         return;
     }
@@ -246,7 +274,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 //                String date = cursor.getString(cursor.getColumnIndex(
 //                        WeatherContract.WeatherEntry.COLUMN_DATETEXT));
-                String date = cursor.getString(COL_WEATHER_DATE);
+//                String date = cursor.getString(COL_WEATHER_DATE);
+
 //                String weather = cursor.getString(cursor.getColumnIndex(
 //                        WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
 //                double high = cursor.getDouble(cursor.getColumnIndex(
@@ -259,10 +288,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //                        + " - " + weather
 //                        + " - " + Utility.formatTemperature(high, isMetric)
 //                        + "/" + Utility.formatTemperature(low, isMetric);
-                String item = date;
 
-                Callback callback = (Callback) getActivity();
-                callback.onItemSelected(item);
+                /*
+                 * must move cursor for two-panel layout
+                 */
+                if (cursor != null && cursor.moveToPosition(position)) {
+                    String date = cursor.getString(COL_WEATHER_DATE);
+                    Callback callback = (Callback) getActivity();
+                    callback.onItemSelected(date);
+                    Log.d(LOG_TAG, date);
+                }
+//                Callback callback = (Callback) getActivity();
+//                callback.onItemSelected(date);
+//                Log.d(LOG_TAG, date);
+                Log.d(LOG_TAG, position + "");
 
                 setPosition(position);
 
@@ -270,7 +309,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-//        refresh();
+//        updateWeather();
 
         if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_KEY)) {
             int position = savedInstanceState.getInt(POSITION_KEY);
@@ -344,7 +383,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (mLocation != null && !mLocation.equals(newLocation)) {
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
 //            mLocation = newLocation;
-//            refresh();
+//            updateWeather();
         }
     }
 
@@ -382,11 +421,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //        boolean isTwoPane();
 //    }
 
-    public boolean isUseTodayLayout() {
-        return useTodayLayout;
-    }
-
-    public void setUseTodayLayout(boolean useTodayLayout) {
-        this.useTodayLayout = useTodayLayout;
-    }
+//    public boolean isUseTodayLayout() {
+//        return useTodayLayout;
+//    }
+//
+//    public void setUseTodayLayout(boolean useTodayLayout) {
+//        this.useTodayLayout = useTodayLayout;
+//    }
 }

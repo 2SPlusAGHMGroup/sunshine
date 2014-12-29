@@ -57,9 +57,9 @@ public class MainActivity extends ActionBarActivity
 //            }
         }
 
-        ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_forecast);
-        fragment.setUseTodayLayout(!isTwoPane());
+//        ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.fragment_forecast);
+//        fragment.setUseTodayLayout(!isTwoPane());
 
         return;
     }
