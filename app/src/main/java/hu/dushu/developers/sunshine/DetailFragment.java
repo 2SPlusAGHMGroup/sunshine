@@ -199,7 +199,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 //            String weather = "w";
 //            double high = 10;
 //            double low = 1;
-        boolean isMetric = Utility.isMetric(getActivity());
+
+//        boolean isMetric = Utility.isMetric(getActivity());
 
         {
             TextView view = (TextView) rootView.findViewById(R.id.detail_day_textview);
@@ -220,11 +221,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
         {
             TextView view = (TextView) rootView.findViewById(R.id.detail_high_textview);
-            view.setText(Utility.formatTemperature(getActivity(), high, isMetric));
+            view.setText(Utility.formatTemperature(getActivity(), high));
         }
         {
             TextView view = (TextView) rootView.findViewById(R.id.detail_low_textview);
-            view.setText(Utility.formatTemperature(getActivity(), low, isMetric));
+            view.setText(Utility.formatTemperature(getActivity(), low));
         }
         {
             TextView view = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
@@ -243,8 +244,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
          * the string for sharing
          */
         forecast = date + " - " + weather + " - "
-                + Utility.formatTemperature(getActivity(), high, isMetric) + "/"
-                + Utility.formatTemperature(getActivity(), low, isMetric);
+                + Utility.formatTemperature(getActivity(), high) + "/"
+                + Utility.formatTemperature(getActivity(), low);
 
         return;
     }

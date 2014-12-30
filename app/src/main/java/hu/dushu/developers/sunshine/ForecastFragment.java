@@ -43,6 +43,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_WEATHER_MIN_TEMP = 4;
     public static final int COL_LOCATION_SETTING = 5;
     public static final int COL_WEATHER_CONDITION_ID = 6;
+    public static final int COL_LOCATION_LAT = 7;
+    public static final int COL_LOCATION_LONG = 8;
 
     private static final int FORECAST_LOADER = 0;
 
@@ -61,7 +63,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
             WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
-            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
 
     private static final String POSITION_KEY = "position";
@@ -76,6 +80,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private int position;
     private ListView view;
 //    private boolean useTodayLayout;
+
+    private double lat;
+    private double lon;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -116,10 +123,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
+        /*if (id == R.id.action_refresh) {
             updateWeather();
             return true;
-        } else if (id == R.id.action_locate) {
+        } else */
+        if (id == R.id.action_locate) {
 
             /*
              * TODO move to main activity
@@ -127,9 +135,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
             SharedPreferences preferences = PreferenceManager
                     .getDefaultSharedPreferences(getActivity());
-            String location = preferences
-                    .getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + location));
+            String location = preferences.getString(
+                    getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+
+            /*
+             * TODO get lat and long coordinates
+             */
+
+
+//            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + location));
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("geo:" + getLat() + "," + getLon() + ""));
             if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(intent);
             } else {
@@ -368,6 +385,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         getAdapter().swapCursor(data);
 
+        /*
+         * read lat and long
+         */
+        data.moveToPosition(getPosition());
+        double lat = data.getDouble(
+                data.getColumnIndex(WeatherContract.LocationEntry.COLUMN_COORD_LAT));
+        double lon = data.getDouble(
+                data.getColumnIndex(WeatherContract.LocationEntry.COLUMN_COORD_LONG));
+
+        setLat(lat);
+        setLon(lon);
+
         return;
     }
 
@@ -428,4 +457,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //    public void setUseTodayLayout(boolean useTodayLayout) {
 //        this.useTodayLayout = useTodayLayout;
 //    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
 }

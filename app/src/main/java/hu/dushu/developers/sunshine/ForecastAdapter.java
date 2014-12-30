@@ -99,17 +99,17 @@ public class ForecastAdapter extends CursorAdapter {
         holder.descriptionView.setText(description);
 
         // Read user preference for metric or imperial temperature units
-        boolean isMetric = Utility.isMetric(context);
+//        boolean isMetric = Utility.isMetric(context);
 
         // Find TextView and set formatted high temperature on it
 //        TextView highView = (TextView) view.findViewById(R.id.list_item_high_textview);
 //        highView.setText(Utility.formatTemperature(high, isMetric));
-        holder.highTempView.setText(Utility.formatTemperature(context, high, isMetric));
+        holder.highTempView.setText(Utility.formatTemperature(context, high));
 
         // Find TextView and set formatted low temperature on it
 //        TextView lowView = (TextView) view.findViewById(R.id.list_item_low_textview);
 //        lowView.setText(Utility.formatTemperature(low, isMetric));
-        holder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
+        holder.lowTempView.setText(Utility.formatTemperature(context, low));
 
         return;
     }

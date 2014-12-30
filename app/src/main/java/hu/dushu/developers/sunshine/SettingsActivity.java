@@ -14,7 +14,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import hu.dushu.developers.sunshine.data.WeatherContract;
-import hu.dushu.developers.sunshine.service.SunshineService;
+import hu.dushu.developers.sunshine.sync.SunshineSyncAdapter;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -89,9 +89,12 @@ public class SettingsActivity extends PreferenceActivity
                 String location = value.toString();
 //                FetchWeatherTask weatherTask = new FetchWeatherTask(this);
 //                weatherTask.execute(location);
-                Intent service = new Intent(this, SunshineService.class);
-                service.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
-                startService(service);
+
+//                Intent service = new Intent(this, SunshineService.class);
+//                service.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
+//                startService(service);
+
+                SunshineSyncAdapter.syncImmediately(this);
             } else {
                 // notify code that weather may be impacted
                 getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);

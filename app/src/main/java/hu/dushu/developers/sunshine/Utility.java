@@ -161,8 +161,9 @@ public class Utility {
 //        }
 //        return String.format("%.0f", temp);
 //    }
-    static String formatTemperature(Context context, double temperature, boolean isMetric) {
+    public static String formatTemperature(Context context, double temperature) {
         double temp;
+        boolean isMetric = Utility.isMetric(context);
         if (!isMetric) {
             temp = 9 * temperature / 5 + 32;
         } else {
@@ -542,4 +543,11 @@ public class Utility {
         }
     }
 
+
+    public static boolean isNotificationEnabled(Context context) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(context.getString(R.string.pref_notifications_key),
+                context.getResources().getBoolean(R.bool.pref_notifications_default));
+    }
 }

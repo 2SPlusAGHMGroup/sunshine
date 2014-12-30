@@ -1,11 +1,17 @@
 package hu.dushu.developers.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import hu.dushu.developers.sunshine.sync.SunshineSyncAdapter;
 
 
 public class MainActivity extends ActionBarActivity
@@ -60,6 +66,8 @@ public class MainActivity extends ActionBarActivity
 //        ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager()
 //                .findFragmentById(R.id.fragment_forecast);
 //        fragment.setUseTodayLayout(!isTwoPane());
+
+        SunshineSyncAdapter.initializeSyncAdapter(this);
 
         return;
     }
