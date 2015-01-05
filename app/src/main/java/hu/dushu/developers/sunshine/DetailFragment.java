@@ -137,14 +137,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
          */
         mLocation = Utility.getPreferredLocation(getActivity());
 
-        Uri weather = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, date);
-        Log.v(LOG_TAG, weather.toString());
+        Uri uri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, date);
+        Log.v(LOG_TAG, uri.toString());
 
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
         return new CursorLoader(
                 getActivity(),
-                weather,
+                uri,
                 FORECAST_COLUMNS,
                 null,
                 null,

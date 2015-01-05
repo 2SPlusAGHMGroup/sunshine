@@ -12,6 +12,11 @@ public class DetailActivity extends ActionBarActivity {
     public static final String DATE_KEY = "forecast_date";
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -27,11 +32,11 @@ public class DetailActivity extends ActionBarActivity {
             Bundle args = new Bundle();
             args.putString(DetailActivity.DATE_KEY, date);
 
-            DetailFragment detailFragment = new DetailFragment();
-            detailFragment.setArguments(args);
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container, detailFragment)
+                    .add(R.id.weather_detail_container, fragment)
                     .commit();
         }
     }

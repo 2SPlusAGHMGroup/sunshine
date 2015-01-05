@@ -72,13 +72,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     //    public ArrayAdapter<String> adapter;
 //    public SimpleCursorAdapter adapter;
-    public ForecastAdapter adapter;
+    private ForecastAdapter adapter;
 
     private String mLocation;
 //    private View rootView;
 
     private int position;
-    private ListView view;
+    private ListView listView;
 //    private boolean useTodayLayout;
 
     private double lat;
@@ -142,11 +142,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             /*
              * TODO get lat and long coordinates
              */
-
-
-//            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + location));
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("geo:" + getLat() + "," + getLon() + ""));
+            Uri uri;
+            if (getLat() == 0 && getLon() == 0) {
+                uri = Uri.parse("geo:0,0?q=" + location);
+            } else {
+                uri = Uri.parse("geo:" + getLat() + "," + getLon() + "");
+            }
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(intent);
             } else {
@@ -207,6 +209,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 //        ArrayList<String> list = new ArrayList<String>();
 //        list.add("Today - Sunny - 88/63");
@@ -274,8 +278,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //            }
 //        });
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         ListView view = (ListView) rootView.findViewById(R.id.listView_forecast);
         view.setAdapter(adapter);
         view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -333,7 +335,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             setPosition(position);
         }
 
-        setView(view);
+        setListView(view);
 
         return rootView;
     }
@@ -381,21 +383,26 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         /*
          * TODO validate position?
          */
-        view.smoothScrollToPosition(getPosition());
+        getListView().smoothScrollToPosition(getPosition());
 
         getAdapter().swapCursor(data);
 
+
+        /*
+         * on the first run, there is no data
+         */
+        if (data.moveToPosition(getPosition())) {
         /*
          * read lat and long
          */
-        data.moveToPosition(getPosition());
-        double lat = data.getDouble(
-                data.getColumnIndex(WeatherContract.LocationEntry.COLUMN_COORD_LAT));
-        double lon = data.getDouble(
-                data.getColumnIndex(WeatherContract.LocationEntry.COLUMN_COORD_LONG));
+            double lat = data.getDouble(
+                    data.getColumnIndex(WeatherContract.LocationEntry.COLUMN_COORD_LAT));
+            double lon = data.getDouble(
+                    data.getColumnIndex(WeatherContract.LocationEntry.COLUMN_COORD_LONG));
 
-        setLat(lat);
-        setLon(lon);
+            setLat(lat);
+            setLon(lon);
+        }
 
         return;
     }
@@ -424,14 +431,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         this.position = position;
     }
 
-    @Nullable
-    @Override
-    public ListView getView() {
-        return view;
+    public ListView getListView() {
+        return listView;
     }
 
-    public void setView(ListView view) {
-        this.view = view;
+    public void setListView(ListView view) {
+        this.listView = view;
     }
 
     /**

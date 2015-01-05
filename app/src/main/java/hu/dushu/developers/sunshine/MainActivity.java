@@ -1,15 +1,11 @@
 package hu.dushu.developers.sunshine;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import hu.dushu.developers.sunshine.sync.SunshineSyncAdapter;
 
@@ -19,7 +15,7 @@ public class MainActivity extends ActionBarActivity
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private boolean twoPane;
+//    private boolean twoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +34,7 @@ public class MainActivity extends ActionBarActivity
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
 //            twoPane = true;
-            setTwoPane(true);
+//            setTwoPane(true);
 
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -53,7 +49,7 @@ public class MainActivity extends ActionBarActivity
             Log.d(LOG_TAG, "phone");
 
 //            twoPane = false;
-            setTwoPane(false);
+//            setTwoPane(false);
 //            setTwoPane(true);
 
 //            if (savedInstanceState == null) {
@@ -138,7 +134,8 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onItemSelected(String date) {
 
-        if (isTwoPane()) {
+//        if (isTwoPane()) {
+        if (getResources().getBoolean(R.bool.two_pane_layout)) {
             DetailFragment detailFragment = new DetailFragment();
 
             Bundle args = new Bundle();
@@ -162,12 +159,12 @@ public class MainActivity extends ActionBarActivity
         return;
     }
 
-    public boolean isTwoPane() {
-        return twoPane;
-//        return true;
-    }
-
-    public void setTwoPane(boolean twoPane) {
-        this.twoPane = twoPane;
-    }
+//    public boolean isTwoPane() {
+//        return twoPane;
+////        return true;
+//    }
+//
+//    public void setTwoPane(boolean twoPane) {
+//        this.twoPane = twoPane;
+//    }
 }

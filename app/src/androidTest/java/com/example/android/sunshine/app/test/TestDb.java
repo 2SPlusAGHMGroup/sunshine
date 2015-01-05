@@ -30,7 +30,7 @@ import hu.dushu.developers.sunshine.data.WeatherDbHelper;
 
 public class TestDb extends AndroidTestCase {
 
-    public static final String LOG_TAG = TestDb.class.getSimpleName();
+    private static final String LOG_TAG = TestDb.class.getSimpleName();
     static final String TEST_LOCATION = "99705";
     static final String TEST_DATE = "20141205";
 

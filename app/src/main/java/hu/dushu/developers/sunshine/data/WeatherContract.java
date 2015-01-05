@@ -121,7 +121,6 @@ public class WeatherContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
 
         /**
-         * TODO YOUR CODE BELOW HERE FOR QUIZ
          * QUIZ - 4b - Adding LocationEntry with ID UriBuilder
          * https://www.udacity.com/course/viewer#!/c-ud853/l-1576308909/e-1604969848/m-1604969849
          */

@@ -58,10 +58,10 @@ public class ForecastAdapter extends CursorAdapter {
 
         ViewHolder holder = (ViewHolder) view.getTag();
 
+        int viewType = getItemViewType(cursor.getPosition());
+
         // Read date from cursor
         String dateString = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
-
-        int viewType = getItemViewType(cursor.getPosition());
 
         // Read weather forecast from cursor
         String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
@@ -117,7 +117,7 @@ public class ForecastAdapter extends CursorAdapter {
     /**
      * Cache of the children views for a forecast list item.
      */
-    public static class ViewHolder {
+    private static class ViewHolder {
         public final ImageView iconView;
         public final TextView dateView;
         public final TextView descriptionView;

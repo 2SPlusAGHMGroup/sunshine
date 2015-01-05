@@ -328,7 +328,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 cVVector.toArray(new ContentValues[weatherArray.length()]));
 
         /*
-         * TODO remove weather date more than one day old
+         * remove weather date more than one day old
          */
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
